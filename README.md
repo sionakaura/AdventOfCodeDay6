@@ -1,5 +1,7 @@
 # Advent Of Code Day 1 - Sonar Sweep
 
+For the main, I had to import a file of the data values and convert them into an ArrayList. 
+
 Part 1:
 The goal of this part was to count the number of times the depth of the ocean increased. My method for this was *sonarSweep1*, where I checked the values of an ArrayList of data values to see if a value was greater than the one before it. If this was true, I added it to my count of increases. At the end, I returned the number of increases. 
 
