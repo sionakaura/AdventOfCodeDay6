@@ -1,1 +1,1 @@
-# AdventOfCodeDay6
+# Advent Of Code Day 6 - Lanternfish
