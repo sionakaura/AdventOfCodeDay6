@@ -1,0 +1,166 @@
+
+import java.io.File; 
+import java.io.FileNotFoundException;  
+import java.util.Scanner;
+import java.util.ArrayList;
+
+
+class Main {
+
+  public static void main(String[] args) {
+    int[] calledNumbers = {7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1};
+    int [] num = {1, 2, 3, 4, 5, 6 ,7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ,20, 21, 22, 23, 24, 25};
+      
+    ArrayList<int[][]> boards = new ArrayList<>();
+    int[] all = convert(importFile("day04test.txt"));
+
+    for (int i = 1; i <= all.length / 25; i ++){
+      boards.add(convert2d(convert(importFile("day04test.txt"), i)));
+    }
+    
+    int calledWordInd = -1;
+    
+    while (!allBingo(boards)){
+      calledWordInd ++;
+      for (int i = 0; i < boards.size(); i ++){
+        boards.set(i, mark(calledNumbers[calledWordInd], boards.get(i)));
+      }
+    }
+    
+    print(boards);
+
+    int bingoBoardInd = -1;
+    for (int i = 0; i < boards.size(); i++){
+      if(bingoCheck(boards.get(i))){
+        bingoBoardInd = i;
+      }
+      
+    }
+    
+    System.out.println(calcScore(calledWordInd, calledNumbers, boards.get(bingoBoardInd)));
+  }
+  
+  
+  public static void print(ArrayList<int[][]> boards){
+    for(int[][] board : boards){
+      for(int[] line : board){
+        for(int num : line){
+          System.out.print(num + "\t");
+        }
+        System.out.println();
+      }
+      System.out.println();
+      System.out.println();
+    }
+  }
+    
+    public static int[][] mark(int called, int [][] nums){
+      for (int i = 0; i < nums.length; i ++){
+        for (int j = 0; j < nums[0].length; j ++){
+          if (nums[i][j] == called){
+            nums[i][j] = -1;
+          }
+        }
+      }
+      return nums;
+    }
+
+    public static void print(int[][] arr){
+      for (int[] nums : arr){
+        for(int num : nums){
+          System.out.print(num + "\t");
+        }
+        System.out.println();
+      }
+    }
+    public static void print(int[] arr){
+      for(int nums : arr){
+        System.out.print(nums + ", ");
+      }
+    }
+    
+    public static int[][] convert2d (int[] nums){
+     int [][] nums2 = new int [5][5];
+     int i = 0;
+      while(i<25){
+        for (int row = 0; row < 5; row++){
+          for (int col = 0; col < 5; col++){
+            nums2 [row][col] = nums[i];
+            i++;
+          }
+        }
+      }
+      return nums2;
+    }
+    
+    public static ArrayList<Integer> importFile (String fileName){
+    ArrayList<Integer> nums = new ArrayList<>();
+    try {
+      File myObj = new File(fileName);
+      Scanner myReader = new Scanner(myObj);
+      while (myReader.hasNextLine()) {
+        int data = myReader.nextInt();
+        nums.add(data);
+      }
+      myReader.close();
+    } catch (FileNotFoundException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }
+    return nums;
+  }
+
+  public static int[] convert(ArrayList<Integer> nums, int boardNum){
+    int thing = (boardNum - 1) * 25;
+    int[] fin = new int[25];
+    for (int i = 0; i < 25; i ++){
+      fin[i] = nums.get(i + thing);
+    }
+    return fin;
+  }
+  public static boolean bingoCheck(int[][] board){
+    for(int row = 0; row < board.length; row ++){
+      if (board[row][0] == -1 && board[row][1] == -1 && board[row][2] == -1 && board[row][3] == -1 && board[row][4] == -1) {
+        return true;
+      }
+    }
+    for(int col = 0; col < board[0].length; col ++){
+      if (board[0][col] == -1 && board[1][col] == -1 && board[2][col] == -1 && board[3][col] == -1 && board[4][col] == -1){
+        return true;
+      }
+    }
+    return false;
+  }
+  public static int calcScore(int index, int[] calledNumbers, int[][] board){
+    int total = 0;
+    for (int[] nums : board){
+      for (int num : nums){
+        if (num != -1){
+          total += num;
+        }
+      }
+    }
+    System.out.println(total);
+    System.out.println(calledNumbers[index]);
+    return total * calledNumbers[index];
+  }
+  
+  public static int[] convert(ArrayList<Integer> nums){
+    int[] fin = new int[nums.size()];
+    for (int i = 0; i < fin.length; i ++){
+      fin[i] = nums.get(i);
+    }
+    return fin;
+  }
+  
+  public static boolean allBingo(ArrayList<int[][]> boards){
+    for (int i = 0; i < boards.size(); i ++){
+      if(bingoCheck(boards.get(i))){
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  
+}
