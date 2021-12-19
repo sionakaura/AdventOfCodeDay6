@@ -1,0 +1,187 @@
+import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+
+class Main {
+
+  public static void main(String[] args) {
+    System.out.println(dangerSpots("testdata.txt"));
+    
+  }
+
+ //important code !!
+ public static int dangerSpots(String fileName){
+    int numspots = 0;
+    ArrayList <String> stringarr = importFile(fileName);
+    ArrayList <Integer> intarr = stringToInt(stringarr);
+    ArrayList <Point> ptarr = pointArray(intarr);
+    ArrayList <Point> newpts = newPts(ptarr);
+    int [][] board = new int[10][10];
+    fill1(newpts, board);
+    for (int r = 0; r < 10; r++){
+      for (int c = 0; c < 10; c++){
+        if (board[r][c] == 2){
+          numspots++;
+        }
+      }
+    }
+    return numspots;
+
+  }
+  
+  
+  public static ArrayList<Point> newPts (ArrayList<Point> pts){
+    ArrayList<Point> newpts = pts;
+    for (int i = 0; i < pts.size()-1; i+=2){
+      Point temp = pts.get(i);
+      Point temp1 = pts.get(i + 1);
+      int xdiff = temp.getX() - temp1.getX();
+      int ydiff = temp.getY() - temp1.getY();
+      if (ydiff == 0){
+        if (xdiff < 0){
+          for (int j = 1; j < xdiff; j++){
+           Point temp2 = new Point(temp.getX()+j, temp.getY());
+           newpts.add(temp2);
+          }
+        } else {
+          for (int j = xdiff-1; j >= 0; j--){
+           Point temp4 = new Point(temp.getX()-j, temp.getY());
+           newpts.add(temp4);
+          }
+        }
+      } else if (xdiff == 0){
+        if (ydiff < 0){
+          for (int j = 1; j < ydiff; j++){
+           Point temp3 = new Point(temp.getX(), temp.getY() + j);
+            newpts.add(temp3);
+          }
+        } else {
+          for (int j = ydiff -1; j >= 0; j--){
+           Point temp5 = new Point(temp.getX(), temp.getY() - j);
+            newpts.add(temp5);
+          }
+        }
+    }
+    }
+    return newpts;
+  }
+
+  public static void fill1 (ArrayList<Point> pts, int [][] nums){
+    for (int i = 0; i < pts.size(); i++){
+      mark(pts.get(i), nums);
+    }
+  }
+
+
+  public static void printMe(int[][] arr){
+      for (int[] nums : arr){
+        for(int num : nums){
+          System.out.print(num + "\t");
+        }
+        System.out.println();
+      }
+    }
+
+  public static void mark (Point a, int [][] nums){
+    for (int row = 0; row < nums.length; row++){
+      for (int col = 0; col < nums[0].length; col++){
+        if ((row == a.getX())&&(col == a.getY())){
+          nums[row][col] += 1;
+        } 
+      }
+    }
+  }
+  
+  public static boolean check (int [][] nums, int r, int c){
+    if ((nums[r-1][c] == -1) && (nums[r][c-1] == -1)&& (nums[r+1][c] == -1) && (nums[r][c+1] == -1)){
+      return true;
+    }
+    return false;
+  }
+
+  /*public static void spot2 (ArrayList<Integer> call, int [][] nums){
+    for (int i = 0; i < call.size(); i++){
+      spot(call.get(i), nums);
+    }
+  }
+
+    public static void spot (int a, int [][] nums){
+      for (int row = 0; row < 10; row++){
+        for (int col = 0; col < 10; col++){
+          if (nums[row][col] == a){
+            nums[row][col] = -1;
+          }
+
+        }
+      }
+  }
+  */
+
+  public static ArrayList<Integer> xarray(ArrayList<Integer> nums){
+    ArrayList<Integer> xList = new ArrayList<>();
+    for (int i = 0; i < nums.size(); i+=2){
+      xList.add(nums.get(i));
+    }
+
+    return xList;
+
+  }
+  public static ArrayList<Integer> yarray(ArrayList<Integer> nums){
+    ArrayList<Integer> yList = new ArrayList<>();
+    for (int i = 1; i < nums.size()-1; i+=2){
+      yList.add(nums.get(i));
+    }
+
+    return yList;
+
+  }
+  
+  public static ArrayList<String> importFile (String fileName){
+    ArrayList<String> words = new ArrayList<>();
+    try {
+      File myObj = new File(fileName);
+      Scanner myReader = new Scanner(myObj);
+      while (myReader.hasNextLine()) {
+        String data = myReader.nextLine();
+        words.add(data);
+      }
+      myReader.close();
+    } catch (FileNotFoundException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }
+    return words;
+  }
+
+  public static ArrayList<Integer> stringToInt (ArrayList<String> words){
+    ArrayList<Integer> nums = new ArrayList<>();
+    for (int i = 0; i < words.size(); i++){
+      String temp = words.get(i);
+      String temp2 = temp.substring(0,1);
+      int temp3 = Integer.parseInt(temp2);
+      nums.add(temp3);
+      String temp4 = temp.substring (2, 3);
+      int temp5 = Integer.parseInt(temp4);
+      nums.add(temp5);
+      String temp6 = temp.substring(7, 8);
+      int temp7 = Integer.parseInt(temp6);
+      nums.add(temp7);
+      String temp8 = temp.substring(9, 10);
+      int temp9 = Integer.parseInt(temp8);
+      nums.add(temp9);
+    }
+    return nums;
+  }
+
+  public static ArrayList<Point> pointArray (ArrayList<Integer> nums){
+    ArrayList<Point> pts = new ArrayList<>();
+    for (int i = 0; i < nums.size(); i+=2){
+      Point temp = new Point (nums.get(i), nums.get(i+1));
+      pts.add(temp);
+    }
+    return pts;
+  }
+
+  
+}
