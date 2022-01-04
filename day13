@@ -1,0 +1,135 @@
+import java.io.*;
+import java.util.*;
+
+class Main {
+  
+  public static void main(String[] args) {
+
+    System.out.println(folding("testData.txt"));
+  }
+  public static int folding(String fileName){
+    ArrayList<String> bad = importFile(fileName); 
+    int[][] coordinates = createArray(bad);
+    int index = 0;
+    while (bad.get(index).length() > 1){
+      index++;
+    }
+    
+    for(int i = index+1; i < bad.size(); i++){
+      String temp = bad.get(i).substring(11);
+      coordinates = fold(coordinates, temp);
+      for (int r = 0; r < coordinates.length; r++) {
+      String temp1 = "";
+      for (int c = 0; c < coordinates[0].length; c++) {
+        if (coordinates[r][c] == 0) {
+          temp1 += " ";
+        } else {
+          temp1 += "*";
+        }
+      }
+      System.out.println(temp1);
+      }
+    }
+    int count = 0;
+
+    for (int r = 0; r < coordinates.length; r++) {
+      String temp = "";
+      for (int c = 0; c < coordinates[0].length; c++) {
+        if (coordinates[r][c] == 0) {
+          temp += " ";
+        } else {
+          temp += "*";
+          count++;
+        }
+        
+      }
+      System.out.println(temp);
+    }
+    return count;
+  }
+
+  public static int[][] createArray(ArrayList<String> bad){
+    ArrayList<Integer> xvals = new ArrayList<>();
+    ArrayList<Integer> yvals = new ArrayList<>();
+    int index = 0;
+    while (bad.get(index).length() > 1){
+      String temp = bad.get(index); 
+      xvals.add(Integer.parseInt(temp.substring(0, temp.indexOf(","))));
+      yvals.add(Integer.parseInt(temp.substring(temp.indexOf(",") + 1)));
+      index++;
+    }
+    
+    
+    int height = 0;
+    int width = 0;
+    for(int i = 0; i < xvals.size(); i++){
+      if(yvals.get(i) > height){
+        height = yvals.get(i);
+      }
+      if(xvals.get(i) > width){
+        width = xvals.get(i);
+      }
+    }
+    int[][] coordinates = new int[height+1][width+1];
+    for(int i = 0; i < xvals.size(); i++){
+      coordinates[yvals.get(i)][xvals.get(i)] = 1;
+    }
+    return coordinates;
+  }
+
+  public static int[][] fold(int[][] coordinates, String fold){
+    int a = 0;
+    int b = 0;
+    int line = Integer.parseInt(fold.substring(2));
+    if(fold.charAt(0) == 'x'){
+      for (int r = 0; r < coordinates.length; r++) {
+        for (int c = line; c < coordinates[0].length; c++) {
+          if(coordinates[r][c] == 1){
+            coordinates[r][-(c - (line *2 ))] = 1;
+          }
+        }
+      }
+      b = line;
+      a = coordinates.length;
+    }else{
+      for (int c = 0; c < coordinates[0].length; c++){
+        for (int r = line; r < coordinates.length; r++) {
+          if(coordinates[r][c] == 1){
+            coordinates[-(r - (line*2))][c] = 1;
+          }
+        }
+      }
+      a = line;
+      b = coordinates[0].length;
+    }
+    int[][] temp = new int[a][b];
+    for (int r = 0; r < temp.length; r++) {
+      for (int c = 0; c < temp[0].length; c++) {
+        temp[r][c] = coordinates[r][c];
+      }
+    }
+
+
+    return temp;
+  }
+
+
+
+  public static ArrayList<String> importFile(String fileName){
+   ArrayList<String> nums = new ArrayList<>();
+     try {
+      File myObj = new File(fileName);
+      Scanner myReader = new Scanner(myObj);
+      while (myReader.hasNextLine()) {
+        String data = myReader.nextLine();
+        nums.add(data);
+      }
+      myReader.close();
+      } catch (FileNotFoundException e) {
+          System.out.println("An error occurred.");
+          e.printStackTrace();
+      }
+      return nums;
+   }
+
+}
